@@ -17,6 +17,7 @@ package org.brunocvcunha.digesteroids.model;
 
 import org.brunocvcunha.digesteroids.annotation.DigesterEntity;
 import org.brunocvcunha.digesteroids.annotation.DigesterMapping;
+import org.brunocvcunha.digesteroids.caster.DigisteroidsTest;
 
 /**
  * Test POJO
@@ -27,13 +28,13 @@ import org.brunocvcunha.digesteroids.annotation.DigesterMapping;
 @DigesterEntity
 public class PersonPOJO {
   
-  @DigesterMapping(source = "LinkedIn", value = "fullName")
+  @DigesterMapping(source = DigisteroidsTest.LINKEDIN, value = "fullName")
   private String name;
   
-  @DigesterMapping(source = "LinkedIn", value = "age")
+  @DigesterMapping(source = DigisteroidsTest.LINKEDIN, value = "age")
   private Integer age;
   
-  @DigesterMapping(source = "LinkedIn", value = "personAddress")
+  @DigesterMapping(source = DigisteroidsTest.LINKEDIN, value = "personAddress")
   private AddressPOJO address;
   
   /**

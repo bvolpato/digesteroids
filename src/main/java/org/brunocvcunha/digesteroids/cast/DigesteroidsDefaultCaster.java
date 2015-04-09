@@ -142,6 +142,10 @@ public class DigesteroidsDefaultCaster implements DigesteroidsCaster {
   @Override
   public <T> T cast(Object value, Type targetType, String source) {
 
+    if (value == null) {
+      return null;
+    }
+    
     TypeToken<T> typeToken = (TypeToken<T>) TypeToken.get(targetType);
     Class<T> toClazz = (Class<T>) typeToken.getRawType();
 

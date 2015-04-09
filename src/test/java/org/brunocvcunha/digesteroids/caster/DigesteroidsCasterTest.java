@@ -73,7 +73,7 @@ public class DigesteroidsCasterTest {
   
   
   @Test
-  public void simplePOJOCast() {
+  public void simpleMapToPOJOCast() {
 
     DigesteroidsDefaultCaster caster = new DigesteroidsDefaultCaster();
 
@@ -93,6 +93,8 @@ public class DigesteroidsCasterTest {
     assertEquals("Joinville", person.getAddress().getCity());
 
   }
+
+  
 
 
 }

@@ -32,8 +32,10 @@ import org.junit.Test;
  */
 public class DigisteroidsTest {
   
+  public static final String LINKEDIN = "LinkedIn";
+  
   @Test
-  public void simpleDigester() throws InstantiationException, IllegalAccessException {
+  public void simpleMapDigester() throws InstantiationException, IllegalAccessException {
 
     Digesteroids digister = new Digesteroids();
 
@@ -47,11 +49,22 @@ public class DigisteroidsTest {
     
     personMap.put("personAddress", addressMap);
     
-    PersonPOJO person = digister.convertObjectToType("LinkedIn", personMap, PersonPOJO.class);
+    PersonPOJO person = digister.convertObjectToType(DigisteroidsTest.LINKEDIN, personMap, PersonPOJO.class);
     
     assertEquals("Bruno", person.getName());
     assertEquals(Integer.valueOf(24), person.getAge());
     assertEquals("Joinville", person.getAddress().getCity());
+
+  }
+
+
+  @Test
+  public void simpleJsonDigester() throws InstantiationException, IllegalAccessException {
+
+    Digesteroids digister = new Digesteroids();
+    PersonPOJO person = digister.convertObjectToType(DigisteroidsTest.LINKEDIN, "{\"fullName\": \"Bruno Candido Volpato da Cunha\"}", PersonPOJO.class);
+    
+    assertEquals("Bruno Candido Volpato da Cunha", person.getName());
 
   }
 
