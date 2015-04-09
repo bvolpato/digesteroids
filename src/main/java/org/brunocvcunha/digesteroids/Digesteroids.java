@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.brunocvcunha.digesteroids.annotation.DigesterEntity;
 import org.brunocvcunha.digesteroids.annotation.DigesterMapping;
 import org.brunocvcunha.digesteroids.cast.DigesteroidsCaster;
 import org.brunocvcunha.digesteroids.cast.DigesteroidsDefaultCaster;
@@ -71,7 +72,7 @@ public class Digesteroids {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    public <T> T convertToType(String source, Object original, Type targetType)
+    public <T> T convertObjectToType(String source, Object original, Type targetType)
             throws InstantiationException, IllegalAccessException {
         TypeToken<T> typeToken = (TypeToken<T>) TypeToken.get(targetType);
         
@@ -90,7 +91,7 @@ public class Digesteroids {
                 DigesterMapping[] references = entryField.getAnnotationsByType(DigesterMapping.class);
 
                 for (DigesterMapping candidate : references) {
-                    if (candidate.source() == source) {
+                    if (candidate.source().equalsIgnoreCase(source)) {
                         reference = candidate;
                         break;
                     }
@@ -190,8 +191,12 @@ public class Digesteroids {
 
         if (refType == ReferenceTypeEnum.NORMAL) {
 
-            resolvedValue = DigesteroidsReflectionUtils.getRecursive(targetMap, refValue);
-
+          resolvedValue = DigesteroidsReflectionUtils.getRecursive(targetMap, refValue);
+          
+          if (targetClass.getAnnotation(DigesterEntity.class) != null) {
+            resolvedValue = convertObjectToType(source, resolvedValue, valueType);
+          } 
+          
         } else if (refType == ReferenceTypeEnum.JSON_PATH) {
 
             resolvedValue = JsonPath.read(caster.json(targetMap), refValue);
@@ -207,9 +212,9 @@ public class Digesteroids {
                 
                 Object resolvedElement;
                 if (valueType instanceof ParameterizedType) {
-                    resolvedElement = convertToType(source, targetMap, ((ParameterizedType) valueType).getActualTypeArguments()[0]);
+                    resolvedElement = convertObjectToType(source, targetMap, ((ParameterizedType) valueType).getActualTypeArguments()[0]);
                 } else {
-                    resolvedElement = convertToType(source, targetMap, valueType);
+                    resolvedElement = convertObjectToType(source, targetMap, valueType);
                 }
                 array.add(resolvedElement);
 
@@ -217,7 +222,7 @@ public class Digesteroids {
                 
                 
             } else {
-                resolvedValue = convertToType(source, targetMap, valueType);
+                resolvedValue = convertObjectToType(source, targetMap, valueType);
             }
 
         } else if (refType == ReferenceTypeEnum.HARDCODE) {
@@ -226,7 +231,8 @@ public class Digesteroids {
 
         }
 
-        return resolvedValue;
+        //make sure that it's the type
+        return caster.cast(resolvedValue, valueType);
 
     }
 

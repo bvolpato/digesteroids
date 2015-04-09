@@ -15,14 +15,21 @@
  */
 package org.brunocvcunha.digesteroids.model;
 
+import org.brunocvcunha.digesteroids.annotation.DigesterEntity;
+import org.brunocvcunha.digesteroids.annotation.DigesterMapping;
+
 /**
  * Test Address POJO
  * 
  * @author Bruno Candido Volpato da Cunha
  *
  */
+@DigesterEntity
 public class AddressPOJO {
+  @DigesterMapping(source = "LinkedIn", value = "address")
   private String address1;
+  
+  @DigesterMapping(source = "LinkedIn", value = "addressCity")
   private String city;
   
   /**

@@ -70,7 +70,7 @@ public class DigesteroidsCasterTest {
     assertEquals(5, dateCalendar.get(Calendar.DAY_OF_MONTH));
 
   }
-
+  
   
   @Test
   public void simplePOJOCast() {

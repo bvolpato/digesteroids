@@ -34,6 +34,7 @@ public interface DigesteroidsCaster {
    * @return Return data
    */
   public <T> T cast(Object value, Type typeOfT);
+  public <T> T cast(Object value, Type targetType, String source);
 
   /**
    * Convert value to a list of map
@@ -69,6 +70,7 @@ public interface DigesteroidsCaster {
    * @return Date
    */
   Date date(Object value);
+
 
 
 }

@@ -133,9 +133,14 @@ public class DigesteroidsDefaultCaster implements DigesteroidsCaster {
     return DATE_FORMAT_PARSER.parseDateTime(String.valueOf(value)).toDate();
   }
   
-  @SuppressWarnings("unchecked")
   @Override
   public <T> T cast(Object value, Type targetType) {
+    return cast(value, targetType, null);
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Override
+  public <T> T cast(Object value, Type targetType, String source) {
 
     TypeToken<T> typeToken = (TypeToken<T>) TypeToken.get(targetType);
     Class<T> toClazz = (Class<T>) typeToken.getRawType();
