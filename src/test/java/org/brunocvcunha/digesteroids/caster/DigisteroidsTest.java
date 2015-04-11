@@ -33,6 +33,7 @@ import org.junit.Test;
 public class DigisteroidsTest {
   
   public static final String LINKEDIN = "LinkedIn";
+  public static final String LINKEDIN_HTML = "LinkedInHtml";
   
   @Test
   public void simpleMapDigester() throws InstantiationException, IllegalAccessException {

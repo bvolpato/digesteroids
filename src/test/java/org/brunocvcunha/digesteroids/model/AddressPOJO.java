@@ -15,6 +15,7 @@
  */
 package org.brunocvcunha.digesteroids.model;
 
+import org.brunocvcunha.digesteroids.ReferenceTypeEnum;
 import org.brunocvcunha.digesteroids.annotation.DigesterEntity;
 import org.brunocvcunha.digesteroids.annotation.DigesterMapping;
 import org.brunocvcunha.digesteroids.caster.DigisteroidsTest;
@@ -28,6 +29,7 @@ import org.brunocvcunha.digesteroids.caster.DigisteroidsTest;
 @DigesterEntity
 public class AddressPOJO {
   @DigesterMapping(source = DigisteroidsTest.LINKEDIN, value = "address")
+  @DigesterMapping(source = DigisteroidsTest.LINKEDIN_HTML, refType = ReferenceTypeEnum.HTML_ID, value = "address1")
   private String address1;
   
   @DigesterMapping(source = DigisteroidsTest.LINKEDIN, value = "addressCity")

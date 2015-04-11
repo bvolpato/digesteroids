@@ -16,36 +16,17 @@
 package org.brunocvcunha.digesteroids.annotation;
 
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.brunocvcunha.digesteroids.ReferenceTypeEnum;
-
 /**
- * Annotation used to map field with another table
+ * Annotation to group multiple mappings
  * @author Bruno Candido Volpato da Cunha
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-@Repeatable(value = DigesterMappings.class)
-public @interface DigesterMapping {
-    
-    /**
-     * @return source
-     */
-    String source() default "";
-    
-    /**
-     * @return refType
-     */
-    ReferenceTypeEnum refType() default ReferenceTypeEnum.NORMAL;
-    
-    /**
-     * @return value
-     */
-    String value();
-    
+public @interface DigesterMappings {
+  DigesterMapping[] value();
 }

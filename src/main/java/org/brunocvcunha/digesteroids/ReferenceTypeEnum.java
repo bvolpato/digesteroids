@@ -26,8 +26,8 @@ public enum ReferenceTypeEnum {
     HARDCODE,
     PASS_THROUGH,
     JSON_PATH,
-    XPATH,
-    CSS,
-    ID;
+    HTML_XPATH,
+    HTML_CSS,
+    HTML_ID;
     
 }

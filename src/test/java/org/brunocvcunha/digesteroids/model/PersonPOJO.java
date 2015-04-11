@@ -15,6 +15,7 @@
  */
 package org.brunocvcunha.digesteroids.model;
 
+import org.brunocvcunha.digesteroids.ReferenceTypeEnum;
 import org.brunocvcunha.digesteroids.annotation.DigesterEntity;
 import org.brunocvcunha.digesteroids.annotation.DigesterMapping;
 import org.brunocvcunha.digesteroids.caster.DigisteroidsTest;
@@ -29,8 +30,10 @@ import org.brunocvcunha.digesteroids.caster.DigisteroidsTest;
 public class PersonPOJO {
   
   @DigesterMapping(source = DigisteroidsTest.LINKEDIN, value = "fullName")
+  @DigesterMapping(source = DigisteroidsTest.LINKEDIN_HTML, refType = ReferenceTypeEnum.HTML_ID, value = "fname")
   private String name;
   
+  @DigesterMapping(source = DigisteroidsTest.LINKEDIN_HTML, refType = ReferenceTypeEnum.HTML_ID, value = "age")
   @DigesterMapping(source = DigisteroidsTest.LINKEDIN, value = "age")
   private Integer age;
   

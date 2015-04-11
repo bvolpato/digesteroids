@@ -51,8 +51,8 @@ public class DigesteroidsCasterTest {
 
     DigesteroidsDefaultCaster caster = new DigesteroidsDefaultCaster();
 
-    assertEquals(1, caster.cast("1", Integer.class));
-    assertEquals(1, caster.cast("1.0", Integer.class));
+    assertEquals(Integer.valueOf(1), caster.cast("1", Integer.class));
+    assertEquals(Integer.valueOf(1), caster.cast("1.0", Integer.class));
 
   }
 
