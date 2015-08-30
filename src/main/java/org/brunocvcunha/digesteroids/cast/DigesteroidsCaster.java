@@ -20,6 +20,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.jsoup.nodes.Element;
+
 /**
  * Reflection Difference Handling Interface
  * 
@@ -70,6 +72,13 @@ public interface DigesteroidsCaster {
    * @return Date
    */
   Date date(Object value);
+
+  /**
+   * Convert a value to HTML Element
+   * @param value Value
+   * @return Date
+   */
+  Element htmlElement(Object value);
 
 
 

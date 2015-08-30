@@ -15,13 +15,16 @@
  */
 package org.brunocvcunha.digesteroids.caster;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.brunocvcunha.digesteroids.Digesteroids;
 import org.brunocvcunha.digesteroids.model.PersonPOJO;
+import org.brunocvcunha.inutils4j.MyStringUtils;
 import org.junit.Test;
 
 /**
@@ -32,6 +35,8 @@ import org.junit.Test;
  */
 public class DigisteroidsTest {
   
+  private static Logger log = Logger.getLogger(DigisteroidsTest.class);
+
   public static final String LINKEDIN = "LinkedIn";
   public static final String LINKEDIN_HTML = "LinkedInHtml";
   
@@ -51,7 +56,8 @@ public class DigisteroidsTest {
     personMap.put("personAddress", addressMap);
     
     PersonPOJO person = digister.convertObjectToType(DigisteroidsTest.LINKEDIN, personMap, PersonPOJO.class);
-    
+    log.info("simpleMapDigester: " + digister.getCaster().json(person));
+
     assertEquals("Bruno", person.getName());
     assertEquals(Integer.valueOf(24), person.getAge());
     assertEquals("Joinville", person.getAddress().getCity());
@@ -64,8 +70,25 @@ public class DigisteroidsTest {
 
     Digesteroids digister = new Digesteroids();
     PersonPOJO person = digister.convertObjectToType(DigisteroidsTest.LINKEDIN, "{\"fullName\": \"Bruno Candido Volpato da Cunha\"}", PersonPOJO.class);
-    
+    log.info("simpleJsonDigester: " + digister.getCaster().json(person));
+
     assertEquals("Bruno Candido Volpato da Cunha", person.getName());
+
+  }
+
+  @Test
+  public void simpleHTMLDigester() throws InstantiationException, IllegalAccessException, IOException {
+
+    Digesteroids digister = new Digesteroids();
+    
+    String content = MyStringUtils.getContent(getClass().getResourceAsStream("/linkedin.html"));
+    
+    PersonPOJO person = digister.convertObjectToType(DigisteroidsTest.LINKEDIN_HTML, content, PersonPOJO.class);
+    log.info("simpleHTMLDigester: " + digister.getCaster().json(person));
+
+    assertEquals("Bruno Candido Volpato da Cunha", person.getName());
+    assertNotNull(person.getAddress());
+    assertEquals("Av Santos Dumont, 831", person.getAddress().getAddress1());
 
   }
 

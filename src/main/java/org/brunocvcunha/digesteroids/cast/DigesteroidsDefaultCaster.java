@@ -30,6 +30,9 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 /**
  * Reflection Difference Handling
@@ -101,6 +104,10 @@ public class DigesteroidsDefaultCaster implements DigesteroidsCaster {
 
   @Override
   public Map<String, Object> map(Object value) {
+    if (value instanceof Map) {
+      return (Map<String, Object>) value;
+    }
+    
     String json;
     if (value instanceof String) {
       json = (String) value;
@@ -185,6 +192,17 @@ public class DigesteroidsDefaultCaster implements DigesteroidsCaster {
     return gson.fromJson(gson.toJson(value), targetType);
 
   }
+
+  @Override
+  public Element htmlElement(Object value) {
+    if (value instanceof Element) {
+      return (Element) value;
+    }
+    
+    Document document = Jsoup.parse(string(value));
+    return document;
+  }
+  
 }
 
 

@@ -48,4 +48,10 @@ public @interface DigesterMapping {
      */
     String value();
     
+    /**
+     * @return htmlText
+     */
+    boolean htmlText() default true;
+
+    
 }

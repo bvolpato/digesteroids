@@ -34,6 +34,8 @@ import org.brunocvcunha.digesteroids.annotation.DigesterEntity;
 import org.brunocvcunha.digesteroids.annotation.DigesterMapping;
 import org.brunocvcunha.digesteroids.cast.DigesteroidsCaster;
 import org.brunocvcunha.digesteroids.cast.DigesteroidsDefaultCaster;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 
 /**
@@ -66,11 +68,13 @@ public class Digesteroids {
 
 
   /**
-   * @param original
-   * @param baseClass
-   * @return
-   * @throws IllegalAccessException
+   * Convert given original object to targetType, using the mappings from the source parameter.
+   * @param source Source name
+   * @param original Original data
+   * @param targetType Target type
+   * @return Converted object
    * @throws InstantiationException
+   * @throws IllegalAccessException
    */
   public <T> T convertObjectToType(String source, Object original, Type targetType)
       throws InstantiationException, IllegalAccessException {
@@ -83,8 +87,6 @@ public class Digesteroids {
 
     Class<T> targetClass = (Class<T>) typeToken.getRawType();
     T target = targetClass.newInstance();
-
-    Map<String, Object> originalMap = caster.map(original);
 
     // at this point, we starting doing comparisons
     for (Field entryField : targetClass.getDeclaredFields()) {
@@ -127,44 +129,9 @@ public class Digesteroids {
 
         Type valueType = writerMethod.getGenericParameterTypes()[0];
 
-        // if (Collection.class.isAssignableFrom(valueType)) {
-        //
-        // Collection<?> collectionValue = (Collection<?>) value;
-        //
-        // if (!collectionValue.isEmpty()) {
-        // Class<?> firstObjectClass =
-        // collectionValue.iterator().next().getClass();
-        //
-        // List<Object> goldenCollection = new ArrayList<>();
-        //
-        // for (Object collectionElement : collectionValue) {
-        // if (firstObjectClass.isPrimitive()
-        // || firstObjectClass == String.class) {
-        // goldenCollection.add(collectionElement);
-        // } else {
-        // goldenCollection.add(convertObjectToTargetMap(source,
-        // collectionElement, firstObjectClass));
-        // }
-        // }
-        //
-        // newFields.put(reference.value(), goldenCollection);
-        // }
-        //
-        // } else if (value instanceof Map) {
-        //
-        // newFields.put(reference.value(),
-        // convertObjectToTargetMap(source, value,
-        // entryField.getType()));
-        //
-        // } else {
-        //
-        // newFields.put(reference.value(), value);
-        //
-        // }
-
         log.info("Reference for field " + entryField.getName() + " - " + reference);
         Object resolvedValue =
-            resolveValue(source, originalMap, reference.refType(), reference.value(), valueType);
+            resolveValue(original, reference, valueType);
 
         if (resolvedValue != null) {
           try {
@@ -180,15 +147,17 @@ public class Digesteroids {
     return target;
   }
 
-  public Object resolveValue(String source, Object originalMap, ReferenceTypeEnum refType,
-      String refValue, Type valueType) throws InstantiationException, IllegalAccessException {
-
-    Map<String, Object> targetMap;
-    if (originalMap instanceof Map) {
-      targetMap = (Map<String, Object>) originalMap;
-    } else {
-      targetMap = caster.map(originalMap);
-    }
+  /**
+   * @param source
+   * @param originalData
+   * @param refType
+   * @param refValue
+   * @param valueType
+   * @return
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   */
+  public Object resolveValue(Object originalData, DigesterMapping reference, Type valueType) throws InstantiationException, IllegalAccessException {
 
     TypeToken<?> typeToken = (TypeToken<?>) TypeToken.get(valueType);
 
@@ -196,52 +165,145 @@ public class Digesteroids {
 
     Object resolvedValue = null;
 
-    if (refType == ReferenceTypeEnum.NORMAL) {
-
-      resolvedValue = DigesteroidsReflectionUtils.getRecursive(targetMap, refValue);
-
-      if (targetClass.getAnnotation(DigesterEntity.class) != null) {
-        resolvedValue = convertObjectToType(source, resolvedValue, valueType);
-      }
-
-    } else if (refType == ReferenceTypeEnum.JSON_PATH) {
-
-      resolvedValue = JsonPath.read(caster.json(targetMap), refValue);
-
-    } else if (refType == ReferenceTypeEnum.PASS_THROUGH) {
-
-
-      if (Collection.class.isAssignableFrom(targetClass)) {
-
-        log.info("Annotated: " + valueType);
-
-        List<Object> array = new ArrayList<Object>();
-
-        Object resolvedElement;
-        if (valueType instanceof ParameterizedType) {
-          resolvedElement = convertObjectToType(source, targetMap,
-              ((ParameterizedType) valueType).getActualTypeArguments()[0]);
-        } else {
-          resolvedElement = convertObjectToType(source, targetMap, valueType);
-        }
-        array.add(resolvedElement);
-
-        resolvedValue = array;
-
-
-      } else {
-        resolvedValue = convertObjectToType(source, targetMap, valueType);
-      }
-
-    } else if (refType == ReferenceTypeEnum.HARDCODE) {
-
-      resolvedValue = refValue;
-
+    if (reference.refType() == ReferenceTypeEnum.NORMAL) {
+      resolvedValue = resolveValueNormal(reference.source(), originalData, reference.value(), valueType, targetClass);
+    } else if (reference.refType() == ReferenceTypeEnum.PASS_THROUGH) {
+      resolvedValue = resolveValuePassthrough(reference.source(), originalData, valueType, targetClass);
+    } else if (reference.refType() == ReferenceTypeEnum.JSON_PATH) {
+      resolvedValue = resolveValueJsonPath(originalData, reference.value());
+    } else if (reference.refType() == ReferenceTypeEnum.HTML_ID) {
+      resolvedValue = resolveValueHTMLId(originalData, reference.value(), reference.htmlText());
+    } else if (reference.refType() == ReferenceTypeEnum.HTML_CSS) {
+      resolvedValue = resolveValueHTMLCss(originalData, reference.value(), reference.htmlText());
+    } else if (reference.refType() == ReferenceTypeEnum.HTML_XPATH) {
+      resolvedValue = resolveValueHTMLXPath(originalData, reference.value(), reference.htmlText());
+    } else if (reference.refType() == ReferenceTypeEnum.HARDCODE) {
+      resolvedValue = reference.value();
     }
 
     // make sure that it's the type
     return caster.cast(resolvedValue, valueType);
 
+  }
+
+  /**
+   * @param source
+   * @param originalData
+   * @param valueType
+   * @param targetClass
+   * @return
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   */
+  protected Object resolveValuePassthrough(String source, Object originalData, Type valueType,
+      Class<?> targetClass) throws InstantiationException, IllegalAccessException {
+    Object resolvedValue;
+
+    if (Collection.class.isAssignableFrom(targetClass)) {
+
+      log.info("Annotated: " + valueType);
+
+      List<Object> array = new ArrayList<>();
+
+      Object resolvedElement;
+      if (valueType instanceof ParameterizedType) {
+        resolvedElement = convertObjectToType(source, originalData,
+            ((ParameterizedType) valueType).getActualTypeArguments()[0]);
+      } else {
+        resolvedElement = convertObjectToType(source, originalData, valueType);
+      }
+      array.add(resolvedElement);
+
+      resolvedValue = array;
+
+
+    } else {
+      
+      resolvedValue = convertObjectToType(source, originalData, valueType);
+    }
+    return resolvedValue;
+  }
+
+  /**
+   * @param originalData
+   * @param refValue
+   * @param b 
+   * @return
+   */
+  protected Object resolveValueHTMLId(Object originalData, String refValue, boolean htmlText) {
+    Element targetElement = caster.htmlElement(originalData);
+    
+    Element elementById = targetElement.getElementById(refValue);
+    if (htmlText) {
+      return elementById.text();
+    }
+
+    return elementById;
+  }
+
+  /**
+   * @param originalData
+   * @param refValue
+   * @param b 
+   * @return
+   */
+  protected Object resolveValueHTMLCss(Object originalData, String refValue, boolean htmlText) {
+    Element targetElement = caster.htmlElement(originalData);
+    Elements elements = targetElement.select(refValue);
+    
+    if (htmlText) {
+      return elements.text();
+    }
+    
+    return elements;
+  }
+
+  /**
+   * @param originalData
+   * @param refValue
+   * @param b 
+   * @return
+   */
+  protected Object resolveValueHTMLXPath(Object originalData, String refValue, boolean htmlText) {
+    Element targetElement = caster.htmlElement(originalData);
+    Elements elements = targetElement.select(refValue);
+    
+    if (htmlText) {
+      return elements.text();
+    }
+    
+    return elements;
+  }
+
+  /**
+   * @param originalData
+   * @param refValue
+   * @return
+   */
+  protected Object resolveValueJsonPath(Object originalData, String refValue) {
+    Map<String, Object> targetMap = caster.map(originalData);
+    return JsonPath.read(caster.json(targetMap), refValue);
+  }
+
+  /**
+   * @param source
+   * @param originalData
+   * @param refValue
+   * @param valueType
+   * @param targetClass
+   * @return
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   */
+  protected Object resolveValueNormal(String source, Object originalData, String refValue,
+      Type valueType, Class<?> targetClass) throws InstantiationException, IllegalAccessException {
+    Map<String, Object> targetMap = caster.map(originalData);
+    Object resolvedValue = DigesteroidsReflectionUtils.getRecursive(targetMap, refValue);
+
+    if (targetClass.getAnnotation(DigesterEntity.class) != null) {
+      resolvedValue = convertObjectToType(source, resolvedValue, valueType);
+    }
+    return resolvedValue;
   }
 
   public void invokeSetter(Object target, Method setter, Object resolvedValue)
@@ -282,4 +344,20 @@ public class Digesteroids {
 
     }
   }
+
+  /**
+   * @return the caster
+   */
+  public DigesteroidsCaster getCaster() {
+    return caster;
+  }
+
+  /**
+   * @param caster the caster to set
+   */
+  public void setCaster(DigesteroidsCaster caster) {
+    this.caster = caster;
+  }
+  
+  
 }

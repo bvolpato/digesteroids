@@ -38,6 +38,7 @@ public class PersonPOJO {
   private Integer age;
   
   @DigesterMapping(source = DigisteroidsTest.LINKEDIN, value = "personAddress")
+  @DigesterMapping(source = DigisteroidsTest.LINKEDIN_HTML, refType = ReferenceTypeEnum.PASS_THROUGH, value = "")
   private AddressPOJO address;
   
   /**

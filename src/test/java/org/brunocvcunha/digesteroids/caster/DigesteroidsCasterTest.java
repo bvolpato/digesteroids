@@ -23,6 +23,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.brunocvcunha.digesteroids.model.PersonPOJO;
+import org.apache.log4j.Logger;
+import org.brunocvcunha.digesteroids.Digesteroids;
 import org.brunocvcunha.digesteroids.cast.DigesteroidsDefaultCaster;
 import org.junit.Test;
 
@@ -33,6 +35,8 @@ import org.junit.Test;
  *
  */
 public class DigesteroidsCasterTest {
+
+  private static Logger log = Logger.getLogger(DigesteroidsCasterTest.class);
 
   @Test
   public void simpleStringCast() {
@@ -87,6 +91,7 @@ public class DigesteroidsCasterTest {
     personMap.put("address", addressMap);
     
     PersonPOJO person = caster.cast(personMap, PersonPOJO.class);
+    log.info("simpleMapToPOJOCast: " + caster.json(person));
     
     assertEquals("Bruno", person.getName());
     assertEquals(Integer.valueOf(24), person.getAge());
