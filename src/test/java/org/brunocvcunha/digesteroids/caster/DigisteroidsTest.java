@@ -37,25 +37,25 @@ public class DigisteroidsTest {
   
   private static Logger log = Logger.getLogger(DigisteroidsTest.class);
 
-  public static final String LINKEDIN = "LinkedIn";
-  public static final String LINKEDIN_HTML = "LinkedInHtml";
+  public static final String SOURCE_EXAMPLE = "LinkedIn";
+  public static final String SOURCE_HTML = "LinkedInHtml";
   
   @Test
   public void simpleMapDigester() throws InstantiationException, IllegalAccessException {
 
     Digesteroids digister = new Digesteroids();
 
-    Map<String, Object> personMap = new LinkedHashMap<String, Object>();
+    Map<String, Object> personMap = new LinkedHashMap<>();
     personMap.put("fullName", "Bruno");
     personMap.put("age", "24");
     
-    Map<String, Object> addressMap = new LinkedHashMap<String, Object>();
+    Map<String, Object> addressMap = new LinkedHashMap<>();
     addressMap.put("address", "Av Santos Dumont, 801");
     addressMap.put("addressCity", "Joinville");
     
     personMap.put("personAddress", addressMap);
     
-    PersonPOJO person = digister.convertObjectToType(DigisteroidsTest.LINKEDIN, personMap, PersonPOJO.class);
+    PersonPOJO person = digister.convertObjectToType(DigisteroidsTest.SOURCE_EXAMPLE, personMap, PersonPOJO.class);
     log.info("simpleMapDigester: " + digister.getCaster().json(person));
 
     assertEquals("Bruno", person.getName());
@@ -69,7 +69,7 @@ public class DigisteroidsTest {
   public void simpleJsonDigester() throws InstantiationException, IllegalAccessException {
 
     Digesteroids digister = new Digesteroids();
-    PersonPOJO person = digister.convertObjectToType(DigisteroidsTest.LINKEDIN, "{\"fullName\": \"Bruno Candido Volpato da Cunha\"}", PersonPOJO.class);
+    PersonPOJO person = digister.convertObjectToType(DigisteroidsTest.SOURCE_EXAMPLE, "{\"fullName\": \"Bruno Candido Volpato da Cunha\"}", PersonPOJO.class);
     log.info("simpleJsonDigester: " + digister.getCaster().json(person));
 
     assertEquals("Bruno Candido Volpato da Cunha", person.getName());
@@ -81,14 +81,13 @@ public class DigisteroidsTest {
 
     Digesteroids digister = new Digesteroids();
     
-    String content = MyStringUtils.getContent(getClass().getResourceAsStream("/linkedin.html"));
-    
-    PersonPOJO person = digister.convertObjectToType(DigisteroidsTest.LINKEDIN_HTML, content, PersonPOJO.class);
+    PersonPOJO person = digister.convertHTMLToType(DigisteroidsTest.SOURCE_HTML, getClass().getResourceAsStream("/source.html"), PersonPOJO.class);
     log.info("simpleHTMLDigester: " + digister.getCaster().json(person));
 
     assertEquals("Bruno Candido Volpato da Cunha", person.getName());
     assertNotNull(person.getAddress());
     assertEquals("Av Santos Dumont, 831", person.getAddress().getAddress1());
+    assertEquals("Palo Alto", person.getAddress().getCity());
 
   }
 

@@ -19,6 +19,7 @@ import com.google.gson.reflect.TypeToken;
 import com.jayway.jsonpath.JsonPath;
 
 import java.beans.PropertyDescriptor;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -34,6 +35,7 @@ import org.brunocvcunha.digesteroids.annotation.DigesterEntity;
 import org.brunocvcunha.digesteroids.annotation.DigesterMapping;
 import org.brunocvcunha.digesteroids.cast.DigesteroidsCaster;
 import org.brunocvcunha.digesteroids.cast.DigesteroidsDefaultCaster;
+import org.brunocvcunha.inutils4j.MyStreamUtils;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -67,6 +69,35 @@ public class Digesteroids {
   }
 
 
+  /**
+   * Convert given stream with HTML to targetType, using the mappings from the default source.
+   * @param source Source name
+   * @param is Stream with the HTML
+   * @param targetType Target type
+   * @return Converted object
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   */
+  public <T> T convertHTMLToType(String source, InputStream is, Type targetType)
+      throws InstantiationException, IllegalAccessException {
+    return convertObjectToType(source, MyStreamUtils.readContent(is), targetType);
+    
+  }
+
+  /**
+   * Convert given original object to targetType, using the mappings from the default source.
+   * @param original Original data
+   * @param targetType Target type
+   * @return Converted object
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   */
+  public <T> T convertObjectToType(Object original, Type targetType)
+      throws InstantiationException, IllegalAccessException {
+    return convertObjectToType("", original, targetType);
+    
+  }
+    
   /**
    * Convert given original object to targetType, using the mappings from the source parameter.
    * @param source Source name

@@ -28,11 +28,12 @@ import org.brunocvcunha.digesteroids.caster.DigisteroidsTest;
  */
 @DigesterEntity
 public class AddressPOJO {
-  @DigesterMapping(source = DigisteroidsTest.LINKEDIN, value = "address")
-  @DigesterMapping(source = DigisteroidsTest.LINKEDIN_HTML, refType = ReferenceTypeEnum.HTML_ID, value = "address1")
+  @DigesterMapping(source = DigisteroidsTest.SOURCE_EXAMPLE, value = "address")
+  @DigesterMapping(source = DigisteroidsTest.SOURCE_HTML, refType = ReferenceTypeEnum.HTML_CSS, value = "p.address1")
   private String address1;
   
-  @DigesterMapping(source = DigisteroidsTest.LINKEDIN, value = "addressCity")
+  @DigesterMapping(source = DigisteroidsTest.SOURCE_EXAMPLE, value = "addressCity")
+  @DigesterMapping(source = DigisteroidsTest.SOURCE_HTML, refType = ReferenceTypeEnum.HTML_XPATH, value = "p > span")
   private String city;
   
   /**
