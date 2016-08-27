@@ -40,9 +40,10 @@ public class DigesteroidsReflectionUtils {
   private static Logger log = Logger.getLogger(DigesteroidsReflectionUtils.class);
 
   private static DigesteroidsCaster caster = new DigesteroidsDefaultCaster();
-  
+
   /**
-   * Builds a instance of the class for a map containing the values, without specifying the handler for differences
+   * Builds a instance of the class for a map containing the values, without specifying the handler
+   * for differences
    * 
    * @param clazz The class to build instance
    * @param values The values map
@@ -52,6 +53,7 @@ public class DigesteroidsReflectionUtils {
    * @throws IntrospectionException Introspection error
    * @throws IllegalArgumentException Argument invalid
    * @throws InvocationTargetException Invalid target
+   * @param <T> Type of the instance to build
    */
   public static <T> T buildInstanceForMap(Class<T> clazz, Map<String, Object> values)
       throws InstantiationException, IllegalAccessException, IntrospectionException,
@@ -72,10 +74,11 @@ public class DigesteroidsReflectionUtils {
    * @throws IntrospectionException Introspection error
    * @throws IllegalArgumentException Argument invalid
    * @throws InvocationTargetException Invalid target
+   * @param <T> Type of the instance to build
    */
-  public static <T> T buildInstanceForMap(Class<T> clazz, Map<String, Object> values, DigesteroidsCaster differenceHandler)
-      throws InstantiationException, IllegalAccessException, IntrospectionException,
-      IllegalArgumentException, InvocationTargetException {
+  public static <T> T buildInstanceForMap(Class<T> clazz, Map<String, Object> values,
+      DigesteroidsCaster differenceHandler) throws InstantiationException, IllegalAccessException,
+      IntrospectionException, IllegalArgumentException, InvocationTargetException {
 
     log.debug("Building new instance of Class " + clazz.getName());
 
@@ -88,7 +91,7 @@ public class DigesteroidsReflectionUtils {
         log.debug("Value for field " + key + " is null, so ignoring it...");
         continue;
       }
-      
+
       log.debug(
           "Invoke setter for " + key + " (" + value.getClass() + " / " + value.toString() + ")");
       Method setter = null;
@@ -120,6 +123,7 @@ public class DigesteroidsReflectionUtils {
    * @param method method
    * @param typeOfT type of annotation inspected
    * @return annotation instance
+   * @param <T> The annotation type to get
    */
   public static <T extends Annotation> T getClosestAnnotation(Method method, Class<T> typeOfT) {
     T annotation = method.getAnnotation(typeOfT);
@@ -134,135 +138,115 @@ public class DigesteroidsReflectionUtils {
 
     return annotation;
   }
-  
+
   /**
-   * @param dataMap
-   * @param fieldName
-   * @return
+   * @param dataMap The map to seek for
+   * @param fieldName The field name (qualified) to look
+   * @return Found data
    */
   public static Object getRecursive(Map<String, Object> dataMap, String fieldName) {
-     List<Object> values = getAllRecursive(dataMap, fieldName);
-     
-     if (values == null || values.isEmpty()) {
-         return null;
-     }
-     
-     return values.get(0);
+    List<Object> values = getAllRecursive(dataMap, fieldName);
+
+    if (values == null || values.isEmpty()) {
+      return null;
+    }
+
+    return values.get(0);
   }
-  
+
   /**
-   * @param dataMap
-   * @param fieldName
-   * @return Object array
+   * @param dataMap The map to seek for
+   * @param fieldName The field name (qualified) to look
+   * @return Found data
    */
   public static List<Object> getAllRecursive(Map<String, Object> dataMap, String fieldName) {
-      List<Object> values = Arrays.asList((Object) dataMap);
-      
-      List<Object> nextLevels = new ArrayList<Object>();
-      String[] fieldStructure = fieldName.split("\\.");
-      for (String fieldLevel : fieldStructure) {
-          for (Object value : values) {
-              
-              List<Object> extractedValues = extractDeepestValues(value, fieldLevel);
-              
-              for (Object extracted : extractedValues) {
-                  if (extracted != null) {
-                      nextLevels.add(extracted);
-                  }
-              }
-              value = extractDeepestValue(value, fieldLevel);
-              
+    List<Object> values = Arrays.asList((Object) dataMap);
+
+    List<Object> nextLevels = new ArrayList<>();
+    String[] fieldStructure = fieldName.split("\\.");
+    for (String fieldLevel : fieldStructure) {
+      for (Object value : values) {
+
+        List<Object> extractedValues = extractDeepestValues(value, fieldLevel);
+
+        for (Object extracted : extractedValues) {
+          if (extracted != null) {
+            nextLevels.add(extracted);
           }
-          
-          values = nextLevels;
-          nextLevels = new ArrayList<Object>();
-          
+        }
+        value = extractDeepestValue(value, fieldLevel);
+
       }
 
-      return values;
+      values = nextLevels;
+      nextLevels = new ArrayList<>();
+
+    }
+
+    return values;
   }
-  
+
   /**
-   * @param value
-   * @param fieldLevel
-   * @return
+   * @param value Object to extract on
+   * @param fieldLevel Field level to search for
+   * @return Extract values
    */
   public static List<Object> extractDeepestValues(Object value, String fieldLevel) {
-      
-      List<Map<String, Object>> levelMaps = new ArrayList<Map<String, Object>>();
-      if (value instanceof Map) {
-          levelMaps.add((Map<String, Object>) value);
-      } else if (value instanceof Collection) {
-          Collection<?> col = (Collection<?>) value;
-          if (col.size() > 0) {
-              for (Object element : col) {
-                  levelMaps.add(caster.map(element));
-              }
+
+    List<Map<String, Object>> levelMaps = new ArrayList<>();
+    if (value instanceof Map) {
+      levelMaps.add((Map<String, Object>) value);
+    } else if (value instanceof Collection) {
+      Collection<?> col = (Collection<?>) value;
+      if (col.size() > 0) {
+        for (Object element : col) {
+          levelMaps.add(caster.map(element));
+        }
+      }
+    } else {
+
+      String jsonVal = caster.json(value);
+      if (jsonVal.startsWith("[")) {
+        List<Map<String, Object>> col = caster.mapList(jsonVal);
+        if (col.size() > 0) {
+          for (Map<String, Object> element : col) {
+            levelMaps.add(element);
           }
+        }
       } else {
-
-          String jsonVal = caster.json(value);
-          if (jsonVal.startsWith("[")) {
-              List<Map<String, Object>> col = caster.mapList(jsonVal);
-              if (col.size() > 0) {
-                  for (Map<String, Object> element : col) {
-                      levelMaps.add(element);
-                  }
-              }
-          } else {
-              levelMaps.add(caster.map(jsonVal));
-          }
+        levelMaps.add(caster.map(jsonVal));
       }
+    }
 
-      if (levelMaps == null || levelMaps.isEmpty()) {
-          return null;
-      }
+    if (levelMaps == null || levelMaps.isEmpty()) {
+      return null;
+    }
 
-      List<Object> values = new ArrayList<Object>();
-      for (Map<String, Object> levelMap : levelMaps) {
-          if (levelMap.containsKey(fieldLevel)) {
-              values.add(levelMap.get(fieldLevel));
-          }
+    List<Object> values = new ArrayList<>();
+    for (Map<String, Object> levelMap : levelMaps) {
+      if (levelMap.containsKey(fieldLevel)) {
+        values.add(levelMap.get(fieldLevel));
       }
-      
-      return values;
+    }
+
+    return values;
   }
-  
+
   /**
-   * @param value
-   * @param fieldLevel
-   * @return
+   * @param value Object to extract on
+   * @param fieldLevel Field level to search for
+   * @return Extract value
    */
   public static Object extractDeepestValue(Object value, String fieldLevel) {
-      Map<String, Object> levelMap = null;
-      if (value instanceof Map) {
-          levelMap = (Map<String, Object>) value;
-      } else if (value instanceof Collection) {
-          Collection<?> col = (Collection<?>) value;
-          if (col.size() > 0) {
-              levelMap = caster.map(col.iterator().next());
-          }
-      } else {
+    List<Object> values = extractDeepestValues(value, fieldLevel);
+    if (values == null || values.isEmpty()) {
+      return null;
+    }
 
-          String jsonVal = caster.json(value);
-          if (jsonVal.startsWith("[")) {
-              List<Map<String, Object>> col = caster.mapList(jsonVal);
-              if (col.size() > 0) {
-                  levelMap = col.get(0);
-              }
-          } else {
-              levelMap = caster.map(jsonVal);
-          }
-      }
-
-      if (levelMap == null || !levelMap.containsKey(fieldLevel)) {
-          return null;
-      }
-
-      return levelMap.get(fieldLevel);
+    return values.get(0);
   }
-  
-  
+
+
 }
 
 

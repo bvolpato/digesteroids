@@ -32,10 +32,20 @@ public interface DigesteroidsCaster {
   /**
    * Cast value to the given type
    * @param value Value to convert
-   * @param typeOfT Type to convert
+   * @param targetType Type to convert
    * @return Return data
+   * @param <T> Type to return data
    */
-  public <T> T cast(Object value, Type typeOfT);
+  public <T> T cast(Object value, Type targetType);
+  
+  /**
+   * Cast value to the given type
+   * @param value Value to convert
+   * @param targetType Type to convert
+   * @param source Source to consider in the annotations
+   * @return Return data
+   * @param <T> Type to return data
+   */
   public <T> T cast(Object value, Type targetType, String source);
 
   /**

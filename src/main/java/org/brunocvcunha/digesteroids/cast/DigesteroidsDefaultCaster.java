@@ -44,14 +44,14 @@ public class DigesteroidsDefaultCaster implements DigesteroidsCaster {
   private static Logger log = Logger.getLogger(DigesteroidsDefaultCaster.class);
 
   /**
-   * Constant for Map<String, Object>
+   * Constant for Map of String to Object
    */
   public static final Type _obj_map_token = new TypeToken<HashMap<String, Object>>() {
     //no impl
   }.getType();
   
   /**
-   * Constant for List<Map<String, Object>>
+   * Constant for List of Map from String to Object
    */
   public static final Type _obj_map_list_token = new TypeToken<ArrayList<HashMap<String, Object>>>() {
     //no impl

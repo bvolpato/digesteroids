@@ -61,7 +61,7 @@ public class Digesteroids {
   }
 
   /**
-   * @param caster
+   * @param caster The instance of Caster to use
    */
   public Digesteroids(DigesteroidsCaster caster) {
     super();
@@ -75,8 +75,9 @@ public class Digesteroids {
    * @param is Stream with the HTML
    * @param targetType Target type
    * @return Converted object
-   * @throws InstantiationException
-   * @throws IllegalAccessException
+   * @throws InstantiationException Can not create instance of target object
+   * @throws IllegalAccessException Access violation
+   * @param <T> Type to return
    */
   public <T> T convertHTMLToType(String source, InputStream is, Type targetType)
       throws InstantiationException, IllegalAccessException {
@@ -89,8 +90,9 @@ public class Digesteroids {
    * @param original Original data
    * @param targetType Target type
    * @return Converted object
-   * @throws InstantiationException
-   * @throws IllegalAccessException
+   * @throws InstantiationException Can not create instance of target object
+   * @throws IllegalAccessException Access violation
+   * @param <T> Type to return
    */
   public <T> T convertObjectToType(Object original, Type targetType)
       throws InstantiationException, IllegalAccessException {
@@ -104,8 +106,9 @@ public class Digesteroids {
    * @param original Original data
    * @param targetType Target type
    * @return Converted object
-   * @throws InstantiationException
-   * @throws IllegalAccessException
+   * @throws InstantiationException Can not create instance of target object
+   * @throws IllegalAccessException Access violation
+   * @param <T> Type to return
    */
   public <T> T convertObjectToType(String source, Object original, Type targetType)
       throws InstantiationException, IllegalAccessException {
@@ -179,14 +182,12 @@ public class Digesteroids {
   }
 
   /**
-   * @param source
-   * @param originalData
-   * @param refType
-   * @param refValue
-   * @param valueType
-   * @return
-   * @throws InstantiationException
-   * @throws IllegalAccessException
+   * @param originalData Original data to resolve
+   * @param reference Reference annotation
+   * @param valueType Value to return
+   * @return Value resolved based on the annotation
+   * @throws InstantiationException Can not create instance of target object
+   * @throws IllegalAccessException Access violation
    */
   public Object resolveValue(Object originalData, DigesterMapping reference, Type valueType) throws InstantiationException, IllegalAccessException {
 
@@ -218,13 +219,13 @@ public class Digesteroids {
   }
 
   /**
-   * @param source
-   * @param originalData
-   * @param valueType
-   * @param targetClass
-   * @return
-   * @throws InstantiationException
-   * @throws IllegalAccessException
+   * @param source Source to consider the mappings
+   * @param originalData Original data
+   * @param valueType The type of the value 
+   * @param targetClass The target class to consider
+   * @return Resolved value
+   * @throws InstantiationException Failed to create instance
+   * @throws IllegalAccessException Access violation
    */
   protected Object resolveValuePassthrough(String source, Object originalData, Type valueType,
       Class<?> targetClass) throws InstantiationException, IllegalAccessException {
@@ -256,15 +257,15 @@ public class Digesteroids {
   }
 
   /**
-   * @param originalData
-   * @param refValue
-   * @param b 
-   * @return
+   * @param originalData Original data with the HTML
+   * @param id The ID to look for
+   * @param htmlText If should return HTML text or the whole object
+   * @return HTML Information
    */
-  protected Object resolveValueHTMLId(Object originalData, String refValue, boolean htmlText) {
+  protected Object resolveValueHTMLId(Object originalData, String id, boolean htmlText) {
     Element targetElement = caster.htmlElement(originalData);
     
-    Element elementById = targetElement.getElementById(refValue);
+    Element elementById = targetElement.getElementById(id);
     if (htmlText) {
       return elementById.text();
     }
@@ -273,10 +274,10 @@ public class Digesteroids {
   }
 
   /**
-   * @param originalData
-   * @param refValue
-   * @param b 
-   * @return
+   * @param originalData Original data with the HTML
+   * @param refValue The CSS selector to look for
+   * @param htmlText If should return HTML text or the whole object
+   * @return HTML Information
    */
   protected Object resolveValueHTMLCss(Object originalData, String refValue, boolean htmlText) {
     Element targetElement = caster.htmlElement(originalData);
@@ -290,10 +291,10 @@ public class Digesteroids {
   }
 
   /**
-   * @param originalData
-   * @param refValue
-   * @param b 
-   * @return
+   * @param originalData Original data with the HTML
+   * @param refValue The XPath selector to look for
+   * @param htmlText If should return HTML text or the whole object
+   * @return HTML Information
    */
   protected Object resolveValueHTMLXPath(Object originalData, String refValue, boolean htmlText) {
     Element targetElement = caster.htmlElement(originalData);
@@ -307,24 +308,24 @@ public class Digesteroids {
   }
 
   /**
-   * @param originalData
-   * @param refValue
-   * @return
+   * @param originalData The JSON data
+   * @param path The JsonPath to return
+   * @return Json Path information
    */
-  protected Object resolveValueJsonPath(Object originalData, String refValue) {
+  protected Object resolveValueJsonPath(Object originalData, String path) {
     Map<String, Object> targetMap = caster.map(originalData);
-    return JsonPath.read(caster.json(targetMap), refValue);
+    return JsonPath.read(caster.json(targetMap), path);
   }
 
   /**
-   * @param source
-   * @param originalData
-   * @param refValue
-   * @param valueType
-   * @param targetClass
-   * @return
-   * @throws InstantiationException
-   * @throws IllegalAccessException
+   * @param source Source to get the annotations
+   * @param originalData Original data to resolve
+   * @param refValue Where the data is
+   * @param valueType The value type
+   * @param targetClass The target class
+   * @return Resolved value
+   * @throws InstantiationException Can not create instance of target object
+   * @throws IllegalAccessException Access violation
    */
   protected Object resolveValueNormal(String source, Object originalData, String refValue,
       Type valueType, Class<?> targetClass) throws InstantiationException, IllegalAccessException {
@@ -337,6 +338,14 @@ public class Digesteroids {
     return resolvedValue;
   }
 
+  /**
+   * @param target Target to set
+   * @param setter Setter method
+   * @param resolvedValue Value to set
+   * @throws IllegalArgumentException Invalid arguments sent
+   * @throws InvocationTargetException Access violation in the method
+   * @throws IllegalAccessException Access violation
+   */
   public void invokeSetter(Object target, Method setter, Object resolvedValue)
       throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     Class<?> valueType = setter.getParameterTypes()[0];
