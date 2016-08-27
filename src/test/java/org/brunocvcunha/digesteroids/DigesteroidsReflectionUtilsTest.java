@@ -38,7 +38,7 @@ public class DigesteroidsReflectionUtilsTest {
     
     Map<String, Object> brunoMap = new HashMap<String, Object>();
     brunoMap.put("name", "Bruno Candido Volpato da Cunha");
-    brunoMap.put("age", 24);
+    brunoMap.put("age", "24");
     
     PersonPOJO brunoVO = DigesteroidsReflectionUtils.buildInstanceForMap(PersonPOJO.class, brunoMap);
     

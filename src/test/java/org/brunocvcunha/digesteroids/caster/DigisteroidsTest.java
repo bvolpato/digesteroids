@@ -37,8 +37,9 @@ public class DigisteroidsTest {
   
   private static Logger log = Logger.getLogger(DigisteroidsTest.class);
 
-  public static final String SOURCE_EXAMPLE = "LinkedIn";
-  public static final String SOURCE_HTML = "LinkedInHtml";
+  public static final String SOURCE_EXAMPLE = "SourceTest";
+  public static final String SOURCE_HTML = "SourceTestHtml";
+  public static final String SOURCE_JSON = "SourceTestJson";
   
   @Test
   public void simpleMapDigester() throws InstantiationException, IllegalAccessException {
@@ -76,6 +77,18 @@ public class DigisteroidsTest {
 
   }
 
+  @Test
+  public void simpleJsonPathDigester() throws InstantiationException, IllegalAccessException {
+
+    Digesteroids digister = new Digesteroids();
+    PersonPOJO person = digister.convertObjectToType(DigisteroidsTest.SOURCE_JSON, "{\"personName\": \"Bruno Candido Volpato da Cunha\"}", PersonPOJO.class);
+    log.info("simpleJsonPathDigester: " + digister.getCaster().json(person));
+
+    assertEquals("Bruno Candido Volpato da Cunha", person.getName());
+
+  }
+
+  
   @Test
   public void simpleHTMLDigester() throws InstantiationException, IllegalAccessException, IOException {
 

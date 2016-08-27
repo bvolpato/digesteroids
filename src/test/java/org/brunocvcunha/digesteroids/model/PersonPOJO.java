@@ -31,6 +31,7 @@ public class PersonPOJO {
   
   @DigesterMapping(source = DigisteroidsTest.SOURCE_EXAMPLE, value = "fullName")
   @DigesterMapping(source = DigisteroidsTest.SOURCE_HTML, refType = ReferenceTypeEnum.HTML_ID, value = "fname")
+  @DigesterMapping(source = DigisteroidsTest.SOURCE_JSON, refType = ReferenceTypeEnum.JSON_PATH, value = "$.personName")
   private String name;
   
   @DigesterMapping(source = DigisteroidsTest.SOURCE_EXAMPLE, value = "age")

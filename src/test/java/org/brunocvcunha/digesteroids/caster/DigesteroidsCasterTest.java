@@ -85,11 +85,11 @@ public class DigesteroidsCasterTest {
 
     DigesteroidsDefaultCaster caster = new DigesteroidsDefaultCaster();
 
-    Map<String, Object> personMap = new LinkedHashMap<String, Object>();
+    Map<String, Object> personMap = new LinkedHashMap<>();
     personMap.put("name", "Bruno");
     personMap.put("age", "24");
     
-    Map<String, Object> addressMap = new LinkedHashMap<String, Object>();
+    Map<String, Object> addressMap = new LinkedHashMap<>();
     addressMap.put("address1", "Av Santos Dumont, 801");
     addressMap.put("city", "Joinville");
     personMap.put("address", addressMap);

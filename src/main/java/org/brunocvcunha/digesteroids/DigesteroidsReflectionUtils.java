@@ -67,7 +67,7 @@ public class DigesteroidsReflectionUtils {
    * 
    * @param clazz Class to build
    * @param values Values map
-   * @param differenceHandler The difference handler
+   * @param caster The difference handler
    * @return The created instance
    * @throws InstantiationException Error instantiating
    * @throws IllegalAccessException Access error
@@ -77,7 +77,7 @@ public class DigesteroidsReflectionUtils {
    * @param <T> Type of the instance to build
    */
   public static <T> T buildInstanceForMap(Class<T> clazz, Map<String, Object> values,
-      DigesteroidsCaster differenceHandler) throws InstantiationException, IllegalAccessException,
+      DigesteroidsCaster caster) throws InstantiationException, IllegalAccessException,
       IntrospectionException, IllegalArgumentException, InvocationTargetException {
 
     log.debug("Building new instance of Class " + clazz.getName());
@@ -107,7 +107,7 @@ public class DigesteroidsReflectionUtils {
         setter.invoke(instance, value);
       } else {
 
-        Object newValue = differenceHandler.cast(value, setter.getParameterTypes()[0]);
+        Object newValue = caster.cast(value, setter.getParameterTypes()[0]);
         setter.invoke(instance, newValue);
 
       }

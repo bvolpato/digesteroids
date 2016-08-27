@@ -346,20 +346,14 @@ public class Digesteroids {
    * @throws InvocationTargetException Access violation in the method
    * @throws IllegalAccessException Access violation
    */
-  public void invokeSetter(Object target, Method setter, Object resolvedValue)
+  protected void invokeSetter(Object target, Method setter, Object resolvedValue)
       throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     Class<?> valueType = setter.getParameterTypes()[0];
 
-    // try {
-    // writerMethod.invoke(target, resolvedValue);
-    // } catch (IllegalAccessException | IllegalArgumentException |
-    // InvocationTargetException e) {
-    // e.printStackTrace();
-    // }
 
+    // if the value and the setter are compatible, so just
+    // invoke it to set the new value
     if (valueType.isAssignableFrom(resolvedValue.getClass())) {
-      // if the value and the setter are compatible, so just
-      // invoke it to set the new value
 
       setter.invoke(target, resolvedValue);
 
