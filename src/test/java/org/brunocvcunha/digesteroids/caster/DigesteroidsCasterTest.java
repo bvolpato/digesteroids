@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.brunocvcunha.digesteroids.model.PersonPOJO;
 import org.apache.log4j.Logger;
@@ -66,12 +67,15 @@ public class DigesteroidsCasterTest {
     DigesteroidsDefaultCaster caster = new DigesteroidsDefaultCaster();
 
     Calendar dateCalendar = new GregorianCalendar();
-    dateCalendar.setTime(caster.date("2015-08-06T05:43:38.239Z"));
-    
+    dateCalendar.setTime(caster.date("2015-08-06T12:01:02.239Z"));
+    dateCalendar.setTimeZone(TimeZone.getTimeZone("UTC"));
     
     assertEquals(2015, dateCalendar.get(Calendar.YEAR));
     assertEquals(7, dateCalendar.get(Calendar.MONTH));
-    assertEquals(5, dateCalendar.get(Calendar.DAY_OF_MONTH));
+    assertEquals(6, dateCalendar.get(Calendar.DAY_OF_MONTH));
+    assertEquals(12, dateCalendar.get(Calendar.HOUR_OF_DAY));
+    assertEquals(1, dateCalendar.get(Calendar.MINUTE));
+    assertEquals(2, dateCalendar.get(Calendar.SECOND));
 
   }
   

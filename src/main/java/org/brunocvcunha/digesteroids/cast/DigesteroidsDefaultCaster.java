@@ -60,12 +60,7 @@ public class DigesteroidsDefaultCaster implements DigesteroidsCaster {
   /**
    * The default format for date and time
    */
-  public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-  
-  /**
-   * Fallback format (used when deserializing and got error with the default)
-   */
-  public static final String OPTIONAL_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+  public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
   
   /**
    * The default format for date
