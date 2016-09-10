@@ -142,7 +142,7 @@ public class Digesteroids {
       }
 
       if (reference != null) {
-        log.info("Found reference, using field: " + reference.value() + ". Field name: "
+        log.debug("Found reference, using field: " + reference.value() + ". Field name: "
             + entryField.getName() + ", Base Class: " + targetClass + ", object: "
             + original.getClass());
 
@@ -163,12 +163,17 @@ public class Digesteroids {
 
         Type valueType = writerMethod.getGenericParameterTypes()[0];
 
-        log.info("Reference for field " + entryField.getName() + " - " + reference);
+        log.debug("Reference for field " + entryField.getName() + " - " + reference);
         Object resolvedValue =
             resolveValue(original, reference, valueType);
 
         if (resolvedValue != null) {
           try {
+            
+            if (reference.trim() && resolvedValue instanceof String) {
+              resolvedValue = ((String)resolvedValue).replaceAll(" ", " ").replaceAll("[\\s\\t]", " ").trim();
+            }
+
             invokeSetter(target, writerMethod, resolvedValue);
           } catch (Exception e) {
             e.printStackTrace();
@@ -214,8 +219,9 @@ public class Digesteroids {
     }
 
     // make sure that it's the type
-    return caster.cast(resolvedValue, valueType);
+    Object returnValue = caster.cast(resolvedValue, valueType);
 
+    return returnValue;
   }
 
   /**
