@@ -268,7 +268,7 @@ public class Digesteroids {
    * @param originalData Original data with the HTML
    * @param id The ID to look for
    * @param htmlText If should return HTML text or the whole object
-   * @param text node to return
+   * @param textNode node to return
    * @return HTML Information
    */
   protected Object resolveValueHTMLId(Object originalData, String id, boolean htmlText, int textNode) {
@@ -291,7 +291,7 @@ public class Digesteroids {
    * @param originalData Original data with the HTML
    * @param refValue The CSS selector to look for
    * @param htmlText If should return HTML text or the whole object
-   * @param text node to return
+   * @param textNode node to return
    * @return HTML Information
    */
   protected Object resolveValueHTMLCss(Object originalData, String refValue, boolean htmlText, int textNode) {
@@ -321,7 +321,7 @@ public class Digesteroids {
    * @param originalData Original data with the HTML
    * @param refValue The XPath selector to look for
    * @param htmlText If should return HTML text or the whole object
-   * @param text node to return
+   * @param textNode node to return
    * @return HTML Information
    */
   protected Object resolveValueHTMLXPath(Object originalData, String refValue, boolean htmlText, int textNode) {
