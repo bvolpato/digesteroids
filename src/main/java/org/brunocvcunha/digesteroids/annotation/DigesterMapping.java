@@ -52,6 +52,11 @@ public @interface DigesterMapping {
      * @return htmlText
      */
     boolean htmlText() default true;
+    
+    /**
+     * @return textNode
+     */
+    int textNode() default -1;
 
     /**
      * @return trim

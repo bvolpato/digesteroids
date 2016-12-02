@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.brunocvcunha.digesteroids.annotation.DigesterEntity;
@@ -37,6 +38,7 @@ import org.brunocvcunha.digesteroids.cast.DigesteroidsCaster;
 import org.brunocvcunha.digesteroids.cast.DigesteroidsDefaultCaster;
 import org.brunocvcunha.inutils4j.MyStreamUtils;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 
 
@@ -209,11 +211,11 @@ public class Digesteroids {
     } else if (reference.refType() == ReferenceTypeEnum.JSON_PATH) {
       resolvedValue = resolveValueJsonPath(originalData, reference.value());
     } else if (reference.refType() == ReferenceTypeEnum.HTML_ID) {
-      resolvedValue = resolveValueHTMLId(originalData, reference.value(), reference.htmlText());
+      resolvedValue = resolveValueHTMLId(originalData, reference.value(), reference.htmlText(), reference.textNode());
     } else if (reference.refType() == ReferenceTypeEnum.HTML_CSS) {
-      resolvedValue = resolveValueHTMLCss(originalData, reference.value(), reference.htmlText());
+      resolvedValue = resolveValueHTMLCss(originalData, reference.value(), reference.htmlText(), reference.textNode());
     } else if (reference.refType() == ReferenceTypeEnum.HTML_XPATH) {
-      resolvedValue = resolveValueHTMLXPath(originalData, reference.value(), reference.htmlText());
+      resolvedValue = resolveValueHTMLXPath(originalData, reference.value(), reference.htmlText(), reference.textNode());
     } else if (reference.refType() == ReferenceTypeEnum.HARDCODE) {
       resolvedValue = reference.value();
     }
@@ -266,12 +268,18 @@ public class Digesteroids {
    * @param originalData Original data with the HTML
    * @param id The ID to look for
    * @param htmlText If should return HTML text or the whole object
+   * @param text node to return
    * @return HTML Information
    */
-  protected Object resolveValueHTMLId(Object originalData, String id, boolean htmlText) {
+  protected Object resolveValueHTMLId(Object originalData, String id, boolean htmlText, int textNode) {
     Element targetElement = caster.htmlElement(originalData);
     
     Element elementById = targetElement.getElementById(id);
+    
+    if (textNode >= 0) {
+      return elementById.textNodes().get(textNode);
+    }
+    
     if (htmlText) {
       return elementById.text();
     }
@@ -283,11 +291,24 @@ public class Digesteroids {
    * @param originalData Original data with the HTML
    * @param refValue The CSS selector to look for
    * @param htmlText If should return HTML text or the whole object
+   * @param text node to return
    * @return HTML Information
    */
-  protected Object resolveValueHTMLCss(Object originalData, String refValue, boolean htmlText) {
+  protected Object resolveValueHTMLCss(Object originalData, String refValue, boolean htmlText, int textNode) {
+
     Element targetElement = caster.htmlElement(originalData);
     Elements elements = targetElement.select(refValue);
+    
+    if (!elements.isEmpty() && textNode >= 0) {
+      List<TextNode> selectedNode = elements.first().textNodes()
+          .stream()
+          .filter(node -> node.text() != null && !node.text().trim().isEmpty())
+          .collect(Collectors.toList());
+      
+      if (selectedNode.size() > textNode) {
+        return selectedNode.get(textNode).text();
+      }
+    }
     
     if (htmlText) {
       return elements.text();
@@ -300,11 +321,16 @@ public class Digesteroids {
    * @param originalData Original data with the HTML
    * @param refValue The XPath selector to look for
    * @param htmlText If should return HTML text or the whole object
+   * @param text node to return
    * @return HTML Information
    */
-  protected Object resolveValueHTMLXPath(Object originalData, String refValue, boolean htmlText) {
+  protected Object resolveValueHTMLXPath(Object originalData, String refValue, boolean htmlText, int textNode) {
     Element targetElement = caster.htmlElement(originalData);
     Elements elements = targetElement.select(refValue);
+    
+    if (textNode >= 0) {
+      return elements.first().textNodes().get(textNode);
+    }
     
     if (htmlText) {
       return elements.text();
