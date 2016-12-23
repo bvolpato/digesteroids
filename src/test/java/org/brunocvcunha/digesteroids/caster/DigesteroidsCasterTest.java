@@ -39,10 +39,11 @@ public class DigesteroidsCasterTest {
 
   private static Logger log = Logger.getLogger(DigesteroidsCasterTest.class);
 
+  private DigesteroidsDefaultCaster caster = DigesteroidsDefaultCaster.getInstance();
+  
   @Test
   public void simpleStringCast() {
 
-    DigesteroidsDefaultCaster caster = new DigesteroidsDefaultCaster();
 
     assertEquals("Bruno", caster.cast("Bruno", String.class));
     assertEquals("1", caster.cast(1, String.class));
@@ -54,8 +55,6 @@ public class DigesteroidsCasterTest {
   @Test
   public void simpleIntCast() {
 
-    DigesteroidsDefaultCaster caster = new DigesteroidsDefaultCaster();
-
     assertEquals(Integer.valueOf(1), caster.cast("1", Integer.class));
     assertEquals(Integer.valueOf(1), caster.cast("1.0", Integer.class));
 
@@ -63,8 +62,6 @@ public class DigesteroidsCasterTest {
 
   @Test
   public void simpleDateCast() {
-
-    DigesteroidsDefaultCaster caster = new DigesteroidsDefaultCaster();
 
     Calendar dateCalendar = new GregorianCalendar();
     dateCalendar.setTime(caster.date("2015-08-06T12:01:02.239Z"));
@@ -82,8 +79,6 @@ public class DigesteroidsCasterTest {
   
   @Test
   public void simpleMapToPOJOCast() {
-
-    DigesteroidsDefaultCaster caster = new DigesteroidsDefaultCaster();
 
     Map<String, Object> personMap = new LinkedHashMap<>();
     personMap.put("name", "Bruno");

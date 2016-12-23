@@ -59,7 +59,7 @@ public class Digesteroids {
    * Non-Args Constructor for the Digesteroids
    */
   public Digesteroids() {
-    this.caster = new DigesteroidsDefaultCaster();
+    this.caster = DigesteroidsDefaultCaster.getInstance();
   }
 
   /**

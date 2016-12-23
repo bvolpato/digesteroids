@@ -39,7 +39,7 @@ public class DigesteroidsReflectionUtils {
 
   private static Logger log = Logger.getLogger(DigesteroidsReflectionUtils.class);
 
-  private static DigesteroidsCaster caster = new DigesteroidsDefaultCaster();
+  private static DigesteroidsCaster caster = DigesteroidsDefaultCaster.getInstance();
 
   /**
    * Builds a instance of the class for a map containing the values, without specifying the handler
@@ -58,7 +58,7 @@ public class DigesteroidsReflectionUtils {
   public static <T> T buildInstanceForMap(Class<T> clazz, Map<String, Object> values)
       throws InstantiationException, IllegalAccessException, IntrospectionException,
       IllegalArgumentException, InvocationTargetException {
-    return buildInstanceForMap(clazz, values, new DigesteroidsDefaultCaster());
+    return buildInstanceForMap(clazz, values, caster);
   }
 
 

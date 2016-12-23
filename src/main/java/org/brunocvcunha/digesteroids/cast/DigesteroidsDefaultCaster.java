@@ -72,8 +72,25 @@ public class DigesteroidsDefaultCaster implements DigesteroidsCaster {
    */
   public static final DateTimeFormatter DATE_FORMAT_PARSER = DateTimeFormat.forPattern(DEFAULT_DATE_FORMAT).withZoneUTC();
 
+  private static DigesteroidsDefaultCaster instance;
+  
+  
+  private DigesteroidsDefaultCaster() {
+  }
+
+  /**
+   * @return singleton instance
+   */
+  public static DigesteroidsDefaultCaster getInstance() {
+    if (instance == null) {
+      instance = new DigesteroidsDefaultCaster();
+    }
+    
+    return instance;
+  }
   
   private static Gson gson = new GsonBuilder().create();
+  private static Gson gsonPretty = new GsonBuilder().setPrettyPrinting().create();
 
   @Override
   public String json(Object value) {
@@ -82,6 +99,15 @@ public class DigesteroidsDefaultCaster implements DigesteroidsCaster {
     }
     
     return gson.toJson(value);
+  }
+  
+  @Override
+  public String jsonPretty(Object value) {
+    if (value == null) {
+      return null;
+    }
+    
+    return gsonPretty.toJson(value);
   }
 
   @Override

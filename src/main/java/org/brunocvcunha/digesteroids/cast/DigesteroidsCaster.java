@@ -70,6 +70,13 @@ public interface DigesteroidsCaster {
   String json(Object value);
 
   /**
+   * Convert a value to pretty JSON
+   * @param value Value
+   * @return Pretty Json
+   */
+  String jsonPretty(Object value);
+
+  /**
    * Convert a value to String
    * @param value String
    * @return String
