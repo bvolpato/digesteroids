@@ -10,8 +10,9 @@ digesteroids
 
 Map data to your POJOs in a beautiful way. Supports mapping from multiple sources:
   1. HTML (scraping), using XPath, ID or CSS selector.
-  2. Json
-  3. Map
+  2. JSON Path
+  3. Maps
+  4. Property files
 
 Download
 --------
@@ -37,65 +38,8 @@ Digesteroids requires at minimum Java 8.
 
 
 
-Example
+Examples
 --------
-
-### Convert a Map or Json into a POJO, converting the names:
-
-PersonPOJO.java
-```java
-@DigesterEntity
-public class PersonPOJO {
-  
-  @DigesterMapping(value = "fullName")
-  private String name;
-  
-  @DigesterMapping(value = "age")
-  private Integer age;
-  
-  @DigesterMapping(value = "personAddress")
-  private AddressPOJO address;
-  
-}
-```
-
-
-AddressPOJO.java
-```java
-@DigesterEntity
-public class AddressPOJO {
-  @DigesterMapping(value = "address")
-  private String address1;
-  
-  @DigesterMapping(value = "addressCity")
-  private String city;
-  
-}
-```
-
-
-Usage
-```java
-Digesteroids digister = new Digesteroids();
-
-Map<String, Object> personMap = new LinkedHashMap<>();
-personMap.put("fullName", "Bruno");
-personMap.put("age", "24");
-
-Map<String, Object> addressMap = new LinkedHashMap<>();
-addressMap.put("address", "65535 University Ave");
-addressMap.put("addressCity", "Palo Alto");
-
-personMap.put("personAddress", addressMap);
-
-PersonPOJO person = digister.convertObjectToType(personMap, PersonPOJO.class);
-
-assertEquals("Bruno", person.getName());
-assertEquals("65535 University Ave", person.getAddress().getAddress1());
-assertEquals("Palo Alto", person.getAddress().getCity());
-```
-
-
 
 
 ### Convert a HTML into a POJO, based on the IDs, CSS Selector or XPath
@@ -133,11 +77,7 @@ public class PersonPOJO {
   private AddressPOJO address;
   
 }
-```
 
-
-AddressPOJO.java
-```java
 @DigesterEntity
 public class AddressPOJO {
   @DigesterMapping(value = "address")
@@ -162,6 +102,61 @@ assertEquals("Bruno Candido Volpato da Cunha", person.getName());
 assertEquals("65535 University Ave", person.getAddress().getAddress1());
 assertEquals("Palo Alto", person.getAddress().getCity());
 ```
+
+
+
+
+### Convert a Map or Json into a POJO, converting the names:
+
+POJOs:
+```java
+@DigesterEntity
+public class PersonPOJO {
+  
+  @DigesterMapping(value = "fullName")
+  private String name;
+  
+  @DigesterMapping(value = "age")
+  private Integer age;
+  
+  @DigesterMapping(value = "personAddress")
+  private AddressPOJO address;
+  
+}
+
+@DigesterEntity
+public class AddressPOJO {
+  @DigesterMapping(value = "address")
+  private String address1;
+  
+  @DigesterMapping(value = "addressCity")
+  private String city;
+  
+}
+```
+
+
+Usage (Map to POJO):
+```java
+Digesteroids digister = new Digesteroids();
+
+Map<String, Object> personMap = new LinkedHashMap<>();
+personMap.put("fullName", "Bruno");
+personMap.put("age", "24");
+
+Map<String, Object> addressMap = new LinkedHashMap<>();
+addressMap.put("address", "65535 University Ave");
+addressMap.put("addressCity", "Palo Alto");
+
+personMap.put("personAddress", addressMap);
+
+PersonPOJO person = digister.convertObjectToType(personMap, PersonPOJO.class);
+
+assertEquals("Bruno", person.getName());
+assertEquals("65535 University Ave", person.getAddress().getAddress1());
+assertEquals("Palo Alto", person.getAddress().getCity());
+```
+
 
 
  [1]: https://search.maven.org/remote_content?g=org.brunocvcunha.digesteroids&a=digesteroids&v=LATEST
