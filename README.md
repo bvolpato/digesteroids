@@ -64,15 +64,12 @@ PersonPOJO.java
 @DigesterEntity
 public class PersonPOJO {
   
-  @DigesterMapping(value = "fullName")
   @DigesterMapping(source = "htmlExample", refType = ReferenceTypeEnum.HTML_ID, value = "fname")
   private String name;
   
-  @DigesterMapping(value = "age")
   @DigesterMapping(source = "htmlExample", refType = ReferenceTypeEnum.HTML_ID, value = "age")
   private Integer age;
   
-  @DigesterMapping(value = "personAddress")
   @DigesterMapping(source = "htmlExample", refType = ReferenceTypeEnum.PASS_THROUGH, value = "")
   private AddressPOJO address;
   
@@ -80,11 +77,9 @@ public class PersonPOJO {
 
 @DigesterEntity
 public class AddressPOJO {
-  @DigesterMapping(value = "address")
   @DigesterMapping(source = "htmlExample", refType = ReferenceTypeEnum.HTML_CSS, value = "p.address1")
   private String address1;
   
-  @DigesterMapping(value = "addressCity")
   @DigesterMapping(source = "htmlExample", refType = ReferenceTypeEnum.HTML_XPATH, value = "p > span")
   private String city;
   
@@ -113,9 +108,12 @@ POJOs:
 @DigesterEntity
 public class PersonPOJO {
   
+  // Field can have multiple @DigesterMapping
+  @DigesterMapping(source = "htmlExample", refType = ReferenceTypeEnum.HTML_ID, value = "fname")
   @DigesterMapping(value = "fullName")
   private String name;
   
+  @DigesterMapping(source = "htmlExample", refType = ReferenceTypeEnum.HTML_ID, value = "age")
   @DigesterMapping(value = "age")
   private Integer age;
   
