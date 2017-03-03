@@ -8,8 +8,10 @@ digesteroids
 
 :pill: Digester on Steroids.
 
-Map data to your POJOs in a beautiful way.
-
+Map data to your POJOs in a beautiful way. Supports mapping from multiple sources:
+  1. HTML (scraping), using XPath, ID or CSS selector.
+  2. Json
+  3. Map
 
 Download
 --------
