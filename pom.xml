@@ -19,7 +19,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.brunocvcunha.digesteroids</groupId>
 	<artifactId>digesteroids</artifactId>
-	<version>0.2-SNAPSHOT</version>
+	<version>0.2</version>
 	<packaging>jar</packaging>
 	<name>Digesteroids</name>
 	<description>Digester on Steroids for Java</description>
