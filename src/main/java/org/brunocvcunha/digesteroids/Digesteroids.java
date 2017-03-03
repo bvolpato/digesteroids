@@ -405,10 +405,18 @@ public class Digesteroids {
       try {
 
         // cast to the type, and call the setter
-        setter.invoke(target, caster.cast(resolvedValue, valueType));
+        Object data = caster.cast(resolvedValue, valueType);
+        Object[] objArray;
+        if (data instanceof Object[]) {
+          objArray = (Object[]) data;
+        } else {
+          objArray = new Object[] { data };
+        }
+        
+        setter.invoke(target, objArray);
 
       } catch (Exception e) {
-        log.warn("Exception occurred while trying to convert data", e);
+        log.warn("Exception occurred while trying to convert data - " + resolvedValue + " - " + setter.getName(), e);
       }
 
     }

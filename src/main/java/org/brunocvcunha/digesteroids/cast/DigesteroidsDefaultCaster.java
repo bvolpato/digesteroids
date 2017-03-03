@@ -210,8 +210,17 @@ public class DigesteroidsDefaultCaster implements DigesteroidsCaster {
 
     
 //    throw new IllegalArgumentException("Need to convert value (" + value.getClass() + " / " + value.toString() + ") to " + toClazz);
-    return gson.fromJson(gson.toJson(value), targetType);
+    
+    if (value instanceof String) {
+      try {
+        return gson.fromJson((String) value, targetType);
+      } catch (Exception e) {
+        //it's ok
+        log.debug("Exception trying to convert string to type", e);
+      }
+    }
 
+    return gson.fromJson(gson.toJson(value), targetType);
   }
 
   @Override
