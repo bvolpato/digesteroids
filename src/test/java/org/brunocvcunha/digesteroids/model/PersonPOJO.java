@@ -32,14 +32,17 @@ public class PersonPOJO {
   @DigesterMapping(source = DigisteroidsTest.SOURCE_EXAMPLE, value = "fullName")
   @DigesterMapping(source = DigisteroidsTest.SOURCE_HTML, refType = ReferenceTypeEnum.HTML_ID, value = "fname")
   @DigesterMapping(source = DigisteroidsTest.SOURCE_JSON, refType = ReferenceTypeEnum.JSON_PATH, value = "$.personName")
+  @DigesterMapping(source = DigisteroidsTest.SOURCE_PROPERTY, value = "person.name")
   private String name;
   
   @DigesterMapping(source = DigisteroidsTest.SOURCE_EXAMPLE, value = "age")
   @DigesterMapping(source = DigisteroidsTest.SOURCE_HTML, refType = ReferenceTypeEnum.HTML_ID, value = "age")
+  @DigesterMapping(source = DigisteroidsTest.SOURCE_PROPERTY, value = "person.age")
   private Integer age;
   
   @DigesterMapping(source = DigisteroidsTest.SOURCE_EXAMPLE, value = "personAddress")
   @DigesterMapping(source = DigisteroidsTest.SOURCE_HTML, refType = ReferenceTypeEnum.PASS_THROUGH, value = "")
+  @DigesterMapping(source = DigisteroidsTest.SOURCE_PROPERTY, refType = ReferenceTypeEnum.PASS_THROUGH, value = "")
   private AddressPOJO address;
   
   /**

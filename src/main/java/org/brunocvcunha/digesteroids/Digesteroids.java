@@ -150,7 +150,6 @@ public class Digesteroids {
 
         PropertyDescriptor descriptor;
         Method writerMethod;
-        Object value;
 
         try {
           descriptor = new PropertyDescriptor(entryField.getName(), targetClass);
@@ -198,9 +197,8 @@ public class Digesteroids {
    */
   public Object resolveValue(Object originalData, DigesterMapping reference, Type valueType) throws InstantiationException, IllegalAccessException {
 
-    TypeToken<?> typeToken = (TypeToken<?>) TypeToken.get(valueType);
-
-    Class<?> targetClass = (Class<?>) typeToken.getRawType();
+    TypeToken<?> typeToken = TypeToken.get(valueType);
+    Class<?> targetClass = typeToken.getRawType();
 
     Object resolvedValue = null;
 
@@ -350,6 +348,7 @@ public class Digesteroids {
   }
 
   /**
+   * Resolve value using simple getter
    * @param source Source to get the annotations
    * @param originalData Original data to resolve
    * @param refValue Where the data is
@@ -362,7 +361,11 @@ public class Digesteroids {
   protected Object resolveValueNormal(String source, Object originalData, String refValue,
       Type valueType, Class<?> targetClass) throws InstantiationException, IllegalAccessException {
     Map<String, Object> targetMap = caster.map(originalData);
-    Object resolvedValue = DigesteroidsReflectionUtils.getRecursive(targetMap, refValue);
+    
+    Object resolvedValue = targetMap.get(refValue);
+    if (resolvedValue == null) {
+      resolvedValue = DigesteroidsReflectionUtils.getRecursive(targetMap, refValue);
+    }
 
     if (targetClass.getAnnotation(DigesterEntity.class) != null) {
       resolvedValue = convertObjectToType(source, resolvedValue, valueType);

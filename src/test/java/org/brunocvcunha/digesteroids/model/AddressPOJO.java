@@ -30,10 +30,12 @@ import org.brunocvcunha.digesteroids.caster.DigisteroidsTest;
 public class AddressPOJO {
   @DigesterMapping(source = DigisteroidsTest.SOURCE_EXAMPLE, value = "address")
   @DigesterMapping(source = DigisteroidsTest.SOURCE_HTML, refType = ReferenceTypeEnum.HTML_CSS, value = "p.address1")
+  @DigesterMapping(source = DigisteroidsTest.SOURCE_PROPERTY, value = "address.street")
   private String address1;
   
   @DigesterMapping(source = DigisteroidsTest.SOURCE_EXAMPLE, value = "addressCity")
   @DigesterMapping(source = DigisteroidsTest.SOURCE_HTML, refType = ReferenceTypeEnum.HTML_XPATH, value = "p > span")
+  @DigesterMapping(source = DigisteroidsTest.SOURCE_PROPERTY, value = "address.city")
   private String city;
   
   /**

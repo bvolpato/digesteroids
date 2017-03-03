@@ -22,12 +22,39 @@ package org.brunocvcunha.digesteroids;
  */
 public enum ReferenceTypeEnum {
 
+    /**
+     * Normal reference, using getter
+     */
     NORMAL,
+    
+    /**
+     * Always assume the same value in the target
+     */
     HARDCODE,
+    
+    /**
+     * Passes the entire cursor to allow nested operations
+     */
     PASS_THROUGH,
+    
+    /**
+     * Uses JSON Path library to select
+     */
     JSON_PATH,
+    
+    /**
+     * Uses XPath to select
+     */
     HTML_XPATH,
+    
+    /**
+     * Uses CSS selector to compute result
+     */
     HTML_CSS,
+    
+    /**
+     * Uses HTML ID to get the result
+     */
     HTML_ID;
     
 }

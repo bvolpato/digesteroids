@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.brunocvcunha.digesteroids.Digesteroids;
@@ -39,6 +40,7 @@ public class DigisteroidsTest {
 
   public static final String SOURCE_EXAMPLE = "SourceTest";
   public static final String SOURCE_HTML = "SourceTestHtml";
+  public static final String SOURCE_PROPERTY = "SourceTestProperty";
   public static final String SOURCE_JSON = "SourceTestJson";
   
   @Test
@@ -104,5 +106,24 @@ public class DigisteroidsTest {
 
   }
 
+  @Test
+  public void simplePropertiesDigester() throws InstantiationException, IllegalAccessException, IOException {
+
+    Digesteroids digister = new Digesteroids();
+    
+    Properties prop = new Properties();
+    prop.load(getClass().getResourceAsStream("/person.properties"));
+    
+    PersonPOJO person = digister.convertObjectToType(DigisteroidsTest.SOURCE_PROPERTY, prop, PersonPOJO.class);
+    log.info("simplePropertiesDigester: " + digister.getCaster().json(person));
+
+    assertEquals("Bruno", person.getName());
+    assertNotNull(person.getAddress());
+    assertEquals("Castro St", person.getAddress().getAddress1());
+    assertEquals("San Francisco", person.getAddress().getCity());
+
+  }
+
+  
 
 }
