@@ -209,11 +209,11 @@ public class Digesteroids {
     } else if (reference.refType() == ReferenceTypeEnum.JSON_PATH) {
       resolvedValue = resolveValueJsonPath(originalData, reference.value());
     } else if (reference.refType() == ReferenceTypeEnum.HTML_ID) {
-      resolvedValue = resolveValueHTMLId(originalData, reference.value(), reference.htmlText(), reference.textNode());
+      resolvedValue = resolveValueHTMLId(originalData, reference.value(), reference.htmlText(), reference.textNode(), reference.attribute());
     } else if (reference.refType() == ReferenceTypeEnum.HTML_CSS) {
-      resolvedValue = resolveValueHTMLCss(originalData, reference.value(), reference.htmlText(), reference.textNode());
+      resolvedValue = resolveValueHTMLCss(originalData, reference.value(), reference.htmlText(), reference.textNode(), reference.attribute());
     } else if (reference.refType() == ReferenceTypeEnum.HTML_XPATH) {
-      resolvedValue = resolveValueHTMLXPath(originalData, reference.value(), reference.htmlText(), reference.textNode());
+      resolvedValue = resolveValueHTMLXPath(originalData, reference.value(), reference.htmlText(), reference.textNode(), reference.attribute());
     } else if (reference.refType() == ReferenceTypeEnum.HARDCODE) {
       resolvedValue = reference.value();
     }
@@ -221,6 +221,10 @@ public class Digesteroids {
     // make sure that it's the type
     Object returnValue = caster.cast(resolvedValue, valueType);
 
+    if (reference.rule() != null && !reference.rule().isInterface()) {
+      return reference.rule().newInstance().apply(returnValue);
+    }
+    
     return returnValue;
   }
 
@@ -269,7 +273,7 @@ public class Digesteroids {
    * @param textNode node to return
    * @return HTML Information
    */
-  protected Object resolveValueHTMLId(Object originalData, String id, boolean htmlText, int textNode) {
+  protected Object resolveValueHTMLId(Object originalData, String id, boolean htmlText, int textNode, String attribute) {
     Element targetElement = caster.htmlElement(originalData);
     
     Element elementById = targetElement.getElementById(id);
@@ -282,6 +286,10 @@ public class Digesteroids {
       return elementById.text();
     }
 
+    if (!attribute.isEmpty()) {
+      return elementById.attr(attribute);
+    }
+    
     return elementById;
   }
 
@@ -292,7 +300,7 @@ public class Digesteroids {
    * @param textNode node to return
    * @return HTML Information
    */
-  protected Object resolveValueHTMLCss(Object originalData, String refValue, boolean htmlText, int textNode) {
+  protected Object resolveValueHTMLCss(Object originalData, String refValue, boolean htmlText, int textNode, String attribute) {
 
     Element targetElement = caster.htmlElement(originalData);
     Elements elements = targetElement.select(refValue);
@@ -312,6 +320,10 @@ public class Digesteroids {
       return elements.text();
     }
     
+    if (!attribute.isEmpty()) {
+      return elements.attr(attribute);
+    }
+    
     return elements;
   }
 
@@ -322,7 +334,7 @@ public class Digesteroids {
    * @param textNode node to return
    * @return HTML Information
    */
-  protected Object resolveValueHTMLXPath(Object originalData, String refValue, boolean htmlText, int textNode) {
+  protected Object resolveValueHTMLXPath(Object originalData, String refValue, boolean htmlText, int textNode, String attribute) {
     Element targetElement = caster.htmlElement(originalData);
     Elements elements = targetElement.select(refValue);
     
@@ -334,6 +346,10 @@ public class Digesteroids {
       return elements.text();
     }
     
+    if (!attribute.isEmpty()) {
+      return elements.attr(attribute);
+    }
+
     return elements;
   }
 

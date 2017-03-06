@@ -22,6 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.brunocvcunha.digesteroids.ReferenceTypeEnum;
+import org.brunocvcunha.digesteroids.rule.DigesterRule;
 
 /**
  * Annotation used to map field with another table
@@ -49,6 +50,11 @@ public @interface DigesterMapping {
     String value();
     
     /**
+     * @return rule
+     */
+    Class<? extends DigesterRule> rule() default DigesterRule.class;
+    
+    /**
      * @return htmlText
      */
     boolean htmlText() default true;
@@ -63,5 +69,11 @@ public @interface DigesterMapping {
      */
     boolean trim() default true;
 
+    
+    /**
+     * @return attribute
+     */
+    String attribute() default "";
+    
     
 }
