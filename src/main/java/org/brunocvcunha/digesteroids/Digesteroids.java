@@ -200,32 +200,43 @@ public class Digesteroids {
     TypeToken<?> typeToken = TypeToken.get(valueType);
     Class<?> targetClass = typeToken.getRawType();
 
-    Object resolvedValue = null;
-
-    if (reference.refType() == ReferenceTypeEnum.NORMAL) {
-      resolvedValue = resolveValueNormal(reference.source(), originalData, reference.value(), valueType, targetClass);
-    } else if (reference.refType() == ReferenceTypeEnum.PASS_THROUGH) {
-      resolvedValue = resolveValuePassthrough(reference.source(), originalData, valueType, targetClass);
-    } else if (reference.refType() == ReferenceTypeEnum.JSON_PATH) {
-      resolvedValue = resolveValueJsonPath(originalData, reference.value());
-    } else if (reference.refType() == ReferenceTypeEnum.HTML_ID) {
-      resolvedValue = resolveValueHTMLId(originalData, reference.value(), reference.htmlText(), reference.textNode(), reference.attribute());
-    } else if (reference.refType() == ReferenceTypeEnum.HTML_CSS) {
-      resolvedValue = resolveValueHTMLCss(originalData, reference.value(), reference.htmlText(), reference.textNode(), reference.attribute());
-    } else if (reference.refType() == ReferenceTypeEnum.HTML_XPATH) {
-      resolvedValue = resolveValueHTMLXPath(originalData, reference.value(), reference.htmlText(), reference.textNode(), reference.attribute());
-    } else if (reference.refType() == ReferenceTypeEnum.HARDCODE) {
-      resolvedValue = reference.value();
-    }
-
-    // make sure that it's the type
-    Object returnValue = caster.cast(resolvedValue, valueType);
-
-    if (reference.rule() != null && !reference.rule().isInterface()) {
-      return reference.rule().newInstance().apply(returnValue);
-    }
+    try {
+      Object resolvedValue = null;
+  
+      if (reference.refType() == ReferenceTypeEnum.NORMAL) {
+        resolvedValue = resolveValueNormal(reference.source(), originalData, reference.value(), valueType, targetClass);
+      } else if (reference.refType() == ReferenceTypeEnum.PASS_THROUGH) {
+        resolvedValue = resolveValuePassthrough(reference.source(), originalData, valueType, targetClass);
+      } else if (reference.refType() == ReferenceTypeEnum.JSON_PATH) {
+        resolvedValue = resolveValueJsonPath(originalData, reference.value());
+      } else if (reference.refType() == ReferenceTypeEnum.HTML_ID) {
+        resolvedValue = resolveValueHTMLId(originalData, reference.value(), reference.htmlText(), reference.textNode(), reference.attribute());
+      } else if (reference.refType() == ReferenceTypeEnum.HTML_CSS) {
+        resolvedValue = resolveValueHTMLCss(originalData, reference.value(), reference.htmlText(), reference.textNode(), reference.attribute());
+      } else if (reference.refType() == ReferenceTypeEnum.HTML_XPATH) {
+        resolvedValue = resolveValueHTMLXPath(originalData, reference.value(), reference.htmlText(), reference.textNode(), reference.attribute());
+      } else if (reference.refType() == ReferenceTypeEnum.HARDCODE) {
+        resolvedValue = reference.value();
+      }
+  
+  
+      if (reference.rule() != null && !reference.rule().isInterface() && resolvedValue != null) {
+        return reference.rule().newInstance().apply(resolvedValue.toString());
+      }
+      
+      // make sure that it's the type
+      Object returnValue = caster.cast(resolvedValue, valueType);
+      return returnValue;
     
-    return returnValue;
+    } catch (Exception e) {
+      
+      if (reference.mandatory()) {
+        throw e;
+      }
+      
+      log.warn("Exception happened parsing field " + reference.value(), e);
+      return null;
+    }
   }
 
   /**

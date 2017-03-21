@@ -75,5 +75,9 @@ public @interface DigesterMapping {
      */
     String attribute() default "";
     
+    /**
+     * @return mandatory
+     */
+    boolean mandatory() default false;
     
 }

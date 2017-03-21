@@ -28,6 +28,6 @@ public interface DigesterRule<T> {
    * @param value input
    * @return output
    */
-  T apply(T value);
+  T apply(String value);
   
 }
