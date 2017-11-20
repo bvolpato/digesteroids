@@ -22,12 +22,12 @@ Download [the latest JAR][1] or grab via Maven:
 <dependency>
   <groupId>org.brunocvcunha.digesteroids</groupId>
   <artifactId>digesteroids</artifactId>
-  <version>0.2</version>
+  <version>0.3</version>
 </dependency>
 ```
 or Gradle:
 ```groovy
-compile 'org.brunocvcunha.digesteroids:digesteroids:0.2'
+compile 'org.brunocvcunha.digesteroids:digesteroids:0.3'
 ```
 
 Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].
